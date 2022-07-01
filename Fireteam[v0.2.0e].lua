@@ -23,7 +23,7 @@ Page.Dropdown({
 			[2] = "Infantry",
 			[3] = tostring(val),
 		}
-		game:GetService("Players").Events.SelectRole:FireServer(unpack(Arguments))
+		game:GetService("ReplicatedStorage").Events.SelectRole:FireServer(unpack(Arguments))
 	end,
 	Options = {
 		"Fireteam Leader",
