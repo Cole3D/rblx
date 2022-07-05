@@ -139,3 +139,5 @@ end)
 Options.Slider1:OnChanged(function()
 	Incremented = Options.Slider1.Value
 end)
+
+Library:Notify('Fireteam [v0.2.0e] Script Loaded', 2)
