@@ -75,10 +75,8 @@ local MarjawiButton = LeftGroup:AddButton("Spawn in Marjawi", function()
 end)
 
 LeftGroup:AddButton("Spawn Anywhere", function()
-	Library:Notify(
-		"Click on a Teammate on the Deployment Map or Open your Map and click on a teammate to spawn to them.",
-		5
-	)
+	Library:Notify("Click a teammate on the Map",5)
+	
 	local MapIcons = game:GetService("Players").LocalPlayer.PlayerGui.Menu.Menu.Deploy.Frame.Windows.MapFrame.MapUI.Map.Holder.Map.MapIcons
 	local PlayersFolder = game:GetService("Workspace"):FindFirstChild("Players")
 
@@ -92,15 +90,17 @@ LeftGroup:AddButton("Spawn Anywhere", function()
 						[1] = CFrame.new(PlayerPosition),
 					}
 					game:GetService("ReplicatedStorage").Events.SpawnPlayer:FireServer(unpack(A))
+					GetPlayer = nil
 					Library:Notify("Successfully spawned to " .. tostring(GetPlayer), 2)
+					return
 				end
 			end)
 
 			value.MouseEnter:Connect(function()
 				local UICorner = Instance.new("UICorner")
 				UICorner.Parent = value
-				value.Transparency = 0.1
-				value.BackgroundColor3 = Color3.new(255, 0, 0)
+				value.Transparency = 0
+				value.BackgroundColor3 = Color3.new(0.933333, 0, 1)
 				GetPlayer = value.Name
 			end)
 
