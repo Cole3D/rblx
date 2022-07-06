@@ -74,7 +74,45 @@ local MarjawiButton = LeftGroup:AddButton("Spawn in Marjawi", function()
 	game:GetService("ReplicatedStorage").Events.SpawnPlayer:FireServer(unpack(Arguments))
 end)
 
--- More Spawn Waypoints? maybe soon or just lazy.....
+LeftGroup:AddButton("Spawn Anywhere", function()
+	Library:Notify(
+		"Click on a Teammate on the Deployment Map or Open your Map and click on a teammate to spawn to them.",
+		5
+	)
+	local MapIcons = game:GetService("Players").LocalPlayer.PlayerGui.Menu.Menu.Deploy.Frame.Windows.MapFrame.MapUI.Map.Holder.Map.MapIcons
+	local PlayersFolder = game:GetService("Workspace"):FindFirstChild("Players")
+
+	for _, value in pairs(MapIcons:GetChildren()) do
+		if value:IsA("Frame") then
+			local GetPlayer
+			game:GetService("UserInputService").InputBegan:Connect(function(key)
+				if key.KeyCode == Enum.KeyCode.G and GetPlayer ~= nil then
+					local PlayerPosition = PlayersFolder:FindFirstChild(tostring(GetPlayer)).HumanoidRootPart.Position
+					local A = {
+						[1] = CFrame.new(PlayerPosition),
+					}
+					game:GetService("ReplicatedStorage").Events.SpawnPlayer:FireServer(unpack(A))
+					Library:Notify("Successfully spawned to " .. tostring(GetPlayer), 2)
+				end
+			end)
+
+			value.MouseEnter:Connect(function()
+				local UICorner = Instance.new("UICorner")
+				UICorner.Parent = value
+				value.Transparency = 0.1
+				value.BackgroundColor3 = Color3.new(255, 0, 0)
+				GetPlayer = value.Name
+			end)
+
+			value.MouseLeave:Connect(function()
+				value:FindFirstChild("UICorner"):Destroy()
+				value.Transparency = 1
+				value.BackgroundColor3 = Color3.new(255, 255, 255)
+				GetPlayer = nil
+			end)
+		end
+	end
+end)
 
 -- RightGroup --
 
@@ -89,7 +127,7 @@ function amb1(arg)
 		}
 		game:GetService("ReplicatedStorage").Events.BuildObject:FireServer(unpack(Arguments))
 	end
-    Library:Notify("Spawned " .. Incremented .. " Ammo Bag's")
+	Library:Notify("Spawned " .. Incremented .. " Ammo Bag's")
 end
 
 function amb2(arg)
@@ -103,31 +141,27 @@ function amb2(arg)
 		}
 		game:GetService("ReplicatedStorage").Events.BuildObject:FireServer(unpack(Arguments))
 	end
-    Library:Notify("Spawned " .. Incremented .. " Ammo Bag's")
+	Library:Notify("Spawned " .. Incremented .. " Ammo Bag's")
 end
 
--- United States
 local USMCButton = RightGroup:AddButton("USMC", function()
 		amb1(Options.Slider1.Value)
 	end):AddTooltip("Spawns a United States Team Ammo Bag")
 
--- Canada
 local CAFButton = RightGroup:AddButton("CAF", function()
 		amb1(Options.Slider1.Value)
 	end):AddTooltip("Spawns a Canada Team Ammo Bag")
 
--- Russia
 local RGFButton = RightGroup:AddButton("RGF", function()
 		amb2(Options.Slider1.Value)
 	end):AddTooltip("Spawns a Russia Team Ammo Bag")
 
--- Insurgents
 local INSButton = RightGroup:AddButton("INS", function()
 		amb2(Options.Slider1.Value)
 	end):AddTooltip("Spawns a Insurgents Team Ammo Bag")
 
 Options.Dropdown1:OnChanged(function()
-	Library:Notify("Changed to " .. Options.Dropdown1.Value, 1)
+	Library:Notify("Changed to " .. tostring(Options.Dropdown1.Value), 1)
 	local Args = {
 		[1] = game:GetService("Players").LocalPlayer.PlayerData.FireteamID.Value,
 		[2] = "Infantry",
@@ -139,5 +173,3 @@ end)
 Options.Slider1:OnChanged(function()
 	Incremented = Options.Slider1.Value
 end)
-
-Library:Notify("Fireteam [v0.2.0e] Loaded", 2)
