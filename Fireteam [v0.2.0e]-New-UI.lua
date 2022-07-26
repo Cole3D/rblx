@@ -16,6 +16,10 @@ local LeftGroup = Tabs.Main:AddLeftGroupbox("Select Role")
 local RightGroup = Tabs.Main:AddRightGroupbox("Spawn Ammo Bag")
 local Settings = Tabs.Settings:AddLeftGroupbox("Window")
 
+Settings:AddButton("Unload UI", function()
+	Library:Unload()
+end):AddTooltip("This button destroys the Script that is Excecuted.")
+
 LeftGroup:AddDropdown("Dropdown1", {
 	Values = {
 		"Fireteam Leader",
@@ -47,10 +51,6 @@ RightGroup:AddSlider("Slider1", {
 Library:OnUnload(function()
 	Library.Unloaded = true
 end)
-
-Settings:AddButton("Unload UI", function()
-		Library:Unload()
-	end):AddTooltip("This button destroys the Script that is Excecuted.")
 
 -- LeftGroup --
 
@@ -173,3 +173,30 @@ end)
 Options.Slider1:OnChanged(function()
 	Incremented = Options.Slider1.Value
 end)
+
+function UAAB()
+	if not game:IsLoaded() then return end
+	local MT = getrawmetatable(game)
+	local Hook = MT.__namecall
+
+	setreadonly(MT, false)
+	MT.__namecall = newcclosure(function(Remote, ...)
+		local Args = {...}
+		local Method = getnamecallmethod()
+		
+		if Method == 'FireServer' and Remote.Name == 'UpdateAmmoBagSupplies' then
+			Args[2] = 1e9
+			return Hook(Remote, unpack(Args))
+		end
+		return Hook(Remote, ...)
+	end)
+	setreadonly(MT, true)
+end
+
+local INFAmmoButton = RightGroup:AddButton("INFAMMO", function()
+	UAAB()
+end):AddTooltip("Unlimited Ammo(Only on AmmoBags) ")
+
+-- End --
+
+Library:Notify('Script Initialized 🟢 ')
