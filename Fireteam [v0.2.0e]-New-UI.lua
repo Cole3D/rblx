@@ -90,8 +90,8 @@ LeftGroup:AddButton("Spawn Anywhere", function()
 						[1] = CFrame.new(PlayerPosition),
 					}
 					game:GetService("ReplicatedStorage").Events.SpawnPlayer:FireServer(unpack(A))
-					GetPlayer = nil
 					Library:Notify("Successfully spawned to " .. tostring(GetPlayer), 2)
+					GetPlayer = nil		
 					return
 				end
 			end)
